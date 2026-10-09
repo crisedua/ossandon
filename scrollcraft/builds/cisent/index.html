@@ -1,0 +1,751 @@
+<!doctype html>
+<!--
+  Cisent, rebuilt on scrollcraft. Grammar: chaptered editorial.
+  Brief, decisions and open questions: BRIEF.md.
+  Engine files (scrollcraft.js / .css) are untouched; everything bespoke is in this file.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cisent · Cybersecurity powered by our own AI</title>
+<meta name="description" content="A cybersecurity ecosystem built on our own agentic AI. Trained to detect, defend and comply. Made in Chile.">
+<meta name="theme-color" content="#ECEDE8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23121513'/><rect x='14' y='6' width='4' height='20' fill='%23B83216'/></svg>">
+<link rel="preload" href="assets/fonts/archivo-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="scrollcraft.css">
+<style>
+  @font-face {
+    font-family: "Archivo"; font-style: normal; font-display: swap;
+    font-weight: 100 900; font-stretch: 62% 125%;
+    src: url("assets/fonts/archivo-latin-standard-normal.woff2") format("woff2-variations");
+  }
+  @font-face {
+    font-family: "Archivo"; font-style: italic; font-display: swap;
+    font-weight: 100 900; font-stretch: 62% 125%;
+    src: url("assets/fonts/archivo-latin-standard-italic.woff2") format("woff2-variations");
+  }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: swap; src: url("assets/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("assets/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); }
+
+  /* Paper, ink, one vermilion. The ink chapter (Red Team) restates all of it. */
+  :root {
+    --sc-canvas:     #ECEDE8;
+    --sc-surface:    #F6F6F2;
+    --sc-ink:        #121513;
+    --sc-ink-soft:   #4A514D;
+    --sc-accent:     #B83216;
+    --sc-accent-ink: #FFFFFF;
+    --sc-font-display: "Archivo", system-ui, sans-serif;
+    --sc-font-text:    "Archivo", system-ui, sans-serif;
+    --sc-font-mono:    "IBM Plex Mono", ui-monospace, monospace;
+    --sc-shadow-color: 90 8% 30%;
+    --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.7);
+
+    --folio: clamp(13rem, 17vw, 16rem);
+    --rule: color-mix(in oklab, var(--sc-ink) 16%, transparent);
+    --r: 2px;
+  }
+
+  body { font-stretch: 100%; }
+  .sc-grain { opacity: 0.05; }
+  ::selection { background: var(--sc-ink); color: var(--sc-canvas); }
+
+  .mono { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); letter-spacing: 0.01em; }
+  .display {
+    font-family: var(--sc-font-display);
+    font-stretch: 84%;
+    font-weight: 640;
+    line-height: 0.96;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .display em { font-style: italic; font-weight: 520; }
+  .lede {
+    font-size: var(--sc-t-lg); line-height: 1.45; letter-spacing: -0.008em;
+    max-width: 34ch; margin: 0; text-wrap: pretty;
+  }
+  .body { max-width: var(--sc-measure); color: var(--sc-ink-soft); margin: 0; text-wrap: pretty; }
+  a.line {
+    color: var(--sc-ink); font-weight: 560; text-decoration: underline;
+    text-decoration-color: var(--sc-accent); text-decoration-thickness: 2px; text-underline-offset: 0.24em;
+    transition: text-decoration-color var(--sc-d-fast) var(--sc-ease-out), color var(--sc-d-fast) var(--sc-ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { a.line:hover { color: var(--sc-accent); } }
+  a.line:active { color: var(--sc-accent); }
+
+  /* ------------------------------------------------------------- folio -- */
+  .folio {
+    position: fixed; inset: 0 auto 0 0; width: var(--folio); z-index: var(--sc-z-chrome);
+    display: grid; grid-template-rows: auto auto 1fr auto; gap: var(--sc-6);
+    padding: var(--sc-6) var(--sc-5) var(--sc-6) var(--sc-6);
+    border-right: 1px solid var(--rule);
+    background: var(--sc-canvas);
+    transition: background-color var(--sc-d-slow) var(--sc-ease-out), color var(--sc-d-slow) var(--sc-ease-out);
+  }
+  .folio__mark {
+    font-family: var(--sc-font-display); font-stretch: 112%; font-weight: 700;
+    font-size: 1.45rem; letter-spacing: -0.03em; text-decoration: none; line-height: 1;
+    justify-self: start;
+  }
+  .folio__toc { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .folio__toc a {
+    display: grid; grid-template-columns: 2.2em 1fr; align-items: baseline;
+    padding: 5px 0; text-decoration: none; color: var(--sc-ink-soft);
+    font-size: var(--sc-t-sm);
+    transition: color var(--sc-d-fast) var(--sc-ease-out);
+  }
+  .folio__toc a .mono { color: inherit; }
+  .folio__toc a[aria-current="true"] { color: var(--sc-ink); font-weight: 600; }
+  .folio__toc a[aria-current="true"] .mono { color: var(--sc-accent); }
+  @media (hover: hover) and (pointer: fine) { .folio__toc a:hover { color: var(--sc-ink); } }
+
+  /* the ledger: the signature move's home */
+  .ledger { align-self: end; display: grid; gap: var(--sc-3); min-height: 0; }
+  .ledger__state { display: flex; align-items: center; gap: var(--sc-2); margin: 0; color: var(--sc-ink); }
+  .ledger__state i {
+    width: 8px; height: 8px; background: var(--sc-ink-soft); flex: none;
+    transition: background-color var(--sc-d-base) var(--sc-ease-out);
+  }
+  .ledger__stripe {
+    height: 3px; background: var(--rule); position: relative; overflow: hidden;
+  }
+  .ledger__stripe span {
+    position: absolute; inset: 0; transform-origin: left; transform: scaleX(var(--ledger-fill, 0));
+    background: var(--sc-ink);
+  }
+  .ledger__lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sc-2); }
+  .ledger__lines li {
+    display: grid; grid-template-columns: 1fr; row-gap: 1px;
+    color: var(--sc-ink-soft); line-height: 1.35;
+    animation: ledger-in var(--sc-d-base) var(--sc-ease-out) both;
+  }
+  .ledger__lines li b { font-weight: 500; color: var(--sc-ink); }
+  .ledger__lines li.is-hot b { color: var(--sc-accent); }
+  @keyframes ledger-in { from { opacity: 0; transform: translateY(4px); } }
+  .folio[data-state="attack"] .ledger__state i { background: var(--sc-accent); }
+  .folio[data-state="attack"] .ledger__stripe span { background: var(--sc-accent); }
+  .folio:is([data-state="contained"], [data-state="closed"]) .ledger__state i { background: var(--sc-ink); }
+  .incident[data-state="closed"] .incident__act p { color: var(--sc-ink-soft); }
+  .folio__cta { justify-self: start; font-size: var(--sc-t-sm); }
+
+  main { margin-left: var(--folio); }
+  .wrap { padding-inline: var(--sc-gutter); max-width: 76rem; }
+
+  /* ---------------------------------------------------------- title page -- */
+  .title {
+    position: relative; min-height: 100svh; overflow: clip;
+    display: grid; align-content: end;
+    padding: var(--sc-9) var(--sc-gutter) clamp(3rem, 11vh, 7rem);
+  }
+  .title__far {
+    position: absolute; left: calc(var(--sc-gutter) - 0.06em); top: 50%;
+    font-family: var(--sc-font-display); font-stretch: 125%; font-weight: 800;
+    font-size: clamp(9rem, 24vw, 26rem); line-height: 0.8; letter-spacing: -0.06em;
+    color: color-mix(in oklab, var(--sc-ink) 5.5%, var(--sc-canvas));
+    translate: 0 -62%;
+    transform: translate3d(calc(var(--mx, 0) * -14px), calc(var(--my, 0) * -10px + var(--ty, 0px)), 0);
+    user-select: none; pointer-events: none; white-space: nowrap;
+  }
+  .title__body { position: relative; display: grid; gap: var(--sc-6); max-width: 64rem; }
+  .title h1 { font-size: clamp(2.9rem, 6.5vw, 7rem); max-width: 21ch; }
+  .title__foot { display: grid; grid-template-columns: minmax(0, 30rem) auto; gap: var(--sc-7); align-items: end; }
+  .title__sub { margin: 0; font-size: var(--sc-t-lg); line-height: 1.45; color: var(--sc-ink); text-wrap: pretty; }
+  .title__cta { margin: 0; font-size: var(--sc-t-lg); white-space: nowrap; }
+  .title__rule {
+    position: absolute; left: var(--sc-gutter); right: var(--sc-gutter); bottom: 0; height: 1px; background: var(--rule);
+  }
+
+  /* ------------------------------------------------------- chapter one -- */
+  .ch { position: relative; }
+  .ch-models { padding-block: var(--sc-section) 0; }
+  .ch-models h2 { font-size: var(--sc-t-4xl); max-width: 12ch; }
+  .ch-models .lede { margin-top: var(--sc-6); }
+
+  .tally {
+    margin: var(--sc-10) 0 0; display: grid; grid-template-columns: auto 1fr; gap: var(--sc-7) var(--sc-8);
+    align-items: end; padding-top: var(--sc-6); border-top: 1px solid var(--rule);
+  }
+  .tally__num {
+    font-family: var(--sc-font-display); font-stretch: 70%; font-weight: 700;
+    font-size: clamp(9rem, 22vw, 20rem); line-height: 0.78; letter-spacing: -0.05em;
+    color: var(--sc-accent); padding-top: 0.06em;
+  }
+  .tally__of { font-family: var(--sc-font-display); font-stretch: 70%; font-weight: 500; font-size: 0.32em; color: var(--sc-ink); letter-spacing: -0.02em; margin-left: 0.08em; }
+  .tally__marks { display: grid; grid-template-columns: repeat(15, 1fr); gap: clamp(4px, 0.7vw, 10px); height: clamp(5rem, 11vw, 9rem); max-width: 34rem; }
+  .tally__marks i { background: var(--rule); transform-origin: bottom; }
+  .tally__marks i:nth-child(-n+4) { background: var(--sc-accent); transform: scaleY(0.08); transition: transform 900ms var(--sc-ease-out); }
+  .tally.sc-in .tally__marks i:nth-child(-n+4) { transform: none; }
+  .tally.sc-in .tally__marks i:nth-child(2) { transition-delay: 90ms; }
+  .tally.sc-in .tally__marks i:nth-child(3) { transition-delay: 180ms; }
+  .tally.sc-in .tally__marks i:nth-child(4) { transition-delay: 270ms; }
+  .tally figcaption { grid-column: 2; max-width: 34rem; font-size: var(--sc-t-lg); line-height: 1.4; margin: 0; }
+  .tally figcaption .mono { display: block; margin-top: var(--sc-3); color: var(--sc-ink-soft); font-size: var(--sc-t-xs); }
+
+  .spread {
+    display: grid; grid-template-columns: 1.35fr 1fr; gap: var(--sc-8);
+    padding-block: var(--sc-10) var(--sc-section);
+  }
+  .spread > div:nth-child(2) { padding-top: var(--sc-10); }
+  .spread h3 { font-size: var(--sc-t-2xl); max-width: 16ch; }
+  .spread .body { margin-top: var(--sc-4); font-size: var(--sc-t-lg); line-height: 1.5; max-width: 32ch; }
+  .spread .ex { list-style: none; padding: 0; margin: var(--sc-6) 0 0; display: grid; gap: 0; max-width: 30rem; }
+  .spread .ex li { display: grid; grid-template-columns: 4.5rem 1fr; padding: var(--sc-3) 0; border-top: 1px solid var(--rule); }
+  .spread .ex li:last-child { border-bottom: 1px solid var(--rule); }
+  .spread .ex .mono { color: var(--sc-ink-soft); padding-top: 0.2em; }
+
+  /* -------------------------------------------------------- intertitle -- */
+  .inter { min-height: 82svh; display: grid; align-items: center; border-top: 1px solid var(--rule); }
+  .inter__line { display: flex; align-items: baseline; gap: var(--sc-6); margin: 0; }
+  .inter__line .mono { font-size: var(--sc-t-base); color: var(--sc-accent); }
+  .inter__line .display { font-size: var(--sc-t-4xl); }
+
+  /* ------------------------------------------------- defense (the peak) -- */
+  .defense .sc-stage { display: grid; align-items: center; }
+  .defense__grid {
+    display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: var(--sc-8);
+    align-items: center; padding-inline: var(--sc-gutter); width: 100%; max-width: 86rem;
+  }
+  .defense__copy .mono { color: var(--sc-ink-soft); text-transform: none; }
+  .defense__copy h2 { font-size: var(--sc-t-3xl); margin-top: var(--sc-4); max-width: 11ch; }
+  .defense__copy .lede { margin-top: var(--sc-5); max-width: 28ch; }
+  .defense__copy .note { margin-top: var(--sc-6); color: var(--sc-ink-soft); }
+
+  .incident {
+    margin: 0; background: var(--sc-surface); box-shadow: var(--sc-e2), var(--sc-edge);
+    border-radius: var(--r); padding: var(--sc-5) var(--sc-6) var(--sc-6);
+  }
+  .incident figcaption { display: flex; justify-content: space-between; gap: var(--sc-4); color: var(--sc-ink-soft); padding-bottom: var(--sc-4); border-bottom: 1px solid var(--rule); }
+  .incident table { width: 100%; border-collapse: collapse; margin-top: var(--sc-2); }
+  .incident th { text-align: left; font-family: var(--sc-font-mono); font-weight: 400; font-size: var(--sc-t-xs); color: var(--sc-ink-soft); padding: var(--sc-3) 0; }
+  .incident td { padding: var(--sc-4) var(--sc-3) var(--sc-4) 0; border-top: 1px solid var(--rule); vertical-align: baseline; }
+  .incident td:last-child { text-align: right; padding-right: 0; }
+  .incident th:last-child { text-align: right; }
+  .incident td.src { font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink-soft); }
+  .incident tr.row { opacity: 0.22; transition: opacity var(--sc-d-base) var(--sc-ease-out); }
+  .incident tr.row.is-in { opacity: 1; }
+  .incident tr.row:not(.is-in) .status { visibility: hidden; }
+  .status {
+    display: inline-block; font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); font-weight: 500;
+    padding: 3px 8px; border: 1px solid var(--rule); border-radius: var(--r); color: var(--sc-ink-soft);
+  }
+  .status[data-s="Analyzing"] { color: var(--sc-ink); border-style: dashed; border-color: var(--sc-ink-soft); }
+  .status[data-s="Detected"] { color: var(--sc-accent); border-color: var(--sc-accent); }
+  .status[data-s="Blocked"] { color: var(--sc-accent-ink); background: var(--sc-accent); border-color: var(--sc-accent); }
+  .incident__act {
+    display: grid; grid-template-columns: 1fr auto; gap: var(--sc-4); align-items: baseline;
+    margin-top: var(--sc-5); padding-top: var(--sc-4); border-top: 1px solid var(--rule); min-height: 3.4em;
+  }
+  .incident__act p { margin: 0; }
+  .incident__count { font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink-soft); white-space: nowrap; }
+  .incident__count b { font-weight: 500; color: var(--sc-ink); font-variant-numeric: tabular-nums; }
+  .incident[data-state="attack"] .incident__count b { color: var(--sc-accent); }
+  .incident .ledger__lines { display: none; }
+
+  /* -------------------------------------------------- red team (ink) -- */
+  .ink {
+    --sc-canvas: #141716; --sc-surface: #1C201E; --sc-ink: #E8EAE4; --sc-ink-soft: #A0A8A3;
+    --sc-accent: #FF7356; --sc-accent-ink: #141716; --rule: color-mix(in oklab, #E8EAE4 18%, transparent);
+    background: var(--sc-canvas); color: var(--sc-ink);
+  }
+  .redteam { min-height: 112svh; display: grid; align-content: center; padding-block: var(--sc-section); }
+  .redteam__mark { overflow: hidden; }
+  .redteam h2 {
+    font-size: clamp(5rem, 17vw, 16rem); line-height: 0.82; letter-spacing: -0.05em; font-stretch: 72%;
+    font-weight: 720; padding-bottom: 0.08em;
+  }
+  .redteam h2 em { color: var(--sc-accent); font-style: normal; }
+  .redteam__copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sc-8); margin-top: var(--sc-8); align-items: start; }
+  .redteam .lede { font-size: var(--sc-t-xl); line-height: 1.25; letter-spacing: -0.015em; max-width: 20ch; font-weight: 520; }
+  .redteam .body { font-size: var(--sc-t-lg); line-height: 1.55; }
+
+  /* ----------------------------------------------------------- report -- */
+  .report { padding-block: var(--sc-section); overflow: clip; }
+  .report__grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: var(--sc-8); align-items: start; }
+  .report h2 { font-size: var(--sc-t-4xl); }
+  .report .lede { margin-top: var(--sc-6); }
+  .report .body { margin-top: var(--sc-4); }
+  .sheet {
+    margin: var(--sc-6) calc(var(--sc-gutter) * -0.5) 0 0; background: #FBFBF8; color: #121513;
+    box-shadow: var(--sc-e3), var(--sc-edge); border-radius: var(--r);
+    padding: clamp(1.5rem, 3vw, 3rem); rotate: -0.6deg;
+  }
+  .sheet header { display: flex; justify-content: space-between; gap: var(--sc-4); align-items: baseline; padding-bottom: var(--sc-4); border-bottom: 2px solid #121513; }
+  .sheet header h3 { margin: 0; font-family: var(--sc-font-display); font-stretch: 84%; font-weight: 640; font-size: var(--sc-t-xl); letter-spacing: -0.02em; }
+  .sheet dl { display: grid; grid-template-columns: auto 1fr; gap: var(--sc-2) var(--sc-5); margin: var(--sc-5) 0; font-size: var(--sc-t-sm); }
+  .sheet dt { color: #4A514D; }
+  .sheet dd { margin: 0; }
+  .sheet table { width: 100%; border-collapse: collapse; font-size: var(--sc-t-sm); }
+  .sheet th { text-align: left; font-weight: 400; color: #4A514D; padding: var(--sc-2) var(--sc-3) var(--sc-2) 0; border-bottom: 1px solid rgb(18 21 19 / 0.2); font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); }
+  .sheet td { padding: var(--sc-3) var(--sc-3) var(--sc-3) 0; border-bottom: 1px solid rgb(18 21 19 / 0.12); vertical-align: baseline; }
+  .sheet td.mono, .sheet td.t { font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); }
+  .sheet .sum { margin: var(--sc-5) 0 0; font-weight: 560; }
+  .sheet .foot { display: flex; justify-content: space-between; align-items: center; gap: var(--sc-4); margin-top: var(--sc-6); padding-top: var(--sc-4); border-top: 1px solid rgb(18 21 19 / 0.2); }
+  .sheet .foot .mono { color: #4A514D; }
+  .btn {
+    font: inherit; font-size: var(--sc-t-sm); font-weight: 600; cursor: pointer;
+    background: #121513; color: #FBFBF8; border: 0; border-radius: var(--r); padding: 10px 16px;
+    transition: background-color var(--sc-d-fast) var(--sc-ease-out), transform 120ms var(--sc-ease-out);
+  }
+  @media (hover: hover) and (pointer: fine) { .btn:hover { background: var(--sc-accent); } }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 2px solid var(--sc-accent); outline-offset: 3px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ------------------------------------------------------------- team -- */
+  .team { padding-block: var(--sc-section); border-top: 1px solid var(--rule); }
+  .team h2 { font-size: var(--sc-t-3xl); max-width: 14ch; }
+  .people { list-style: none; margin: var(--sc-9) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sc-9) var(--sc-8); }
+  .people li:nth-child(even) { margin-top: var(--sc-10); }
+  .person { display: grid; grid-template-columns: minmax(8rem, 0.8fr) 1fr; gap: var(--sc-5); align-items: start; }
+  .person__plate { margin: 0; overflow: hidden; border-radius: var(--r); background: #1a1d1b; aspect-ratio: 4 / 5; }
+  .person__plate img { width: 100%; height: 112%; object-fit: cover; margin-top: -6%; }
+  .person .mono { color: var(--sc-ink-soft); display: block; }
+  .person h3 { margin: var(--sc-2) 0 var(--sc-4); font-family: var(--sc-font-display); font-stretch: 90%; font-weight: 620; font-size: var(--sc-t-xl); letter-spacing: -0.02em; line-height: 1.05; }
+  .person ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sc-2); font-size: var(--sc-t-sm); line-height: 1.45; }
+  .person ul li { padding-top: var(--sc-2); border-top: 1px solid var(--rule); margin: 0 !important; }
+
+  /* -------------------------------------------------------- colophon -- */
+  .colophon { min-height: 88svh; display: grid; grid-template-rows: 1fr auto; padding-block: var(--sc-section) var(--sc-6); border-top: 1px solid var(--rule); }
+  .colophon__ask { align-self: center; }
+  .colophon h2 { font-size: var(--sc-t-3xl); max-width: 16ch; }
+  .colophon p.run { font-size: var(--sc-t-xl); line-height: 1.35; margin: var(--sc-6) 0 0; max-width: 30ch; letter-spacing: -0.012em; }
+  .colophon__mast { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--sc-4); padding-top: var(--sc-5); border-top: 1px solid var(--rule); color: var(--sc-ink-soft); }
+  .colophon__mast .mark { font-family: var(--sc-font-display); font-stretch: 112%; font-weight: 700; color: var(--sc-ink); letter-spacing: -0.03em; }
+
+  /* ---------------------------------------------------------- phones -- */
+  @media (max-width: 1023px) {
+    :root { --folio: 0px; }
+    .folio {
+      inset: 0 0 auto 0; width: auto; height: 52px; padding: 0 var(--sc-gutter);
+      grid-template-columns: auto 1fr auto; grid-template-rows: none; align-items: center; gap: var(--sc-4);
+      border-right: 0; border-bottom: 1px solid var(--rule);
+    }
+    .folio__mark { font-size: 1.2rem; }
+    .folio nav { display: none; }
+    .folio__cta { display: none; }
+    .ledger { align-self: center; justify-self: end; display: flex; gap: var(--sc-3); }
+    .ledger__lines, .ledger__stripe { display: none; }
+    .folio__chap { display: block !important; justify-self: start; color: var(--sc-ink-soft); }
+    main { padding-top: 52px; }
+  }
+  .folio__chap { display: none; }
+
+  @media (max-width: 860px) {
+    .title { padding-top: var(--sc-8); }
+    .title__foot { grid-template-columns: 1fr; gap: var(--sc-5); }
+    .title__far { top: 34%; font-size: 40vw; }
+    .tally { grid-template-columns: 1fr; gap: var(--sc-5); margin-top: var(--sc-8); }
+    .tally figcaption { grid-column: 1; }
+    .spread { grid-template-columns: 1fr; gap: var(--sc-8); padding-block: var(--sc-8) var(--sc-section); }
+    .spread > div:nth-child(2) { padding-top: 0; }
+    .defense__grid { grid-template-columns: 1fr; gap: var(--sc-5); }
+    .defense__copy h2 { font-size: var(--sc-t-2xl); }
+    .defense__copy .lede { font-size: var(--sc-t-base); margin-top: var(--sc-3); }
+    .defense__copy .note { display: none; }
+    .incident { padding: var(--sc-4); }
+    .incident td { padding-block: var(--sc-3); }
+    .incident th:nth-child(2), .incident td.src { display: none; }
+    .redteam__copy, .report__grid { grid-template-columns: 1fr; gap: var(--sc-6); }
+    .sheet { margin-right: 0; rotate: 0deg; }
+    .sheet th:nth-child(3), .sheet td.mono { display: none; }
+    .people { grid-template-columns: 1fr; gap: var(--sc-8); }
+    .people li:nth-child(even) { margin-top: 0; }
+    .person { grid-template-columns: 7.5rem 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tally__marks i:nth-child(-n+4) { transform: none; transition: none; }
+    .ledger__lines li { animation: none; }
+    .title__far { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sc-grain" aria-hidden="true"></div>
+
+<aside class="folio" id="folio" data-state="watching" aria-label="Contents">
+  <a class="folio__mark" href="#top">Cisent</a>
+  <span class="folio__chap mono" aria-hidden="true"></span>
+  <nav aria-label="Chapters">
+    <ol class="folio__toc">
+      <li><a href="#models"><span class="mono">I</span>Our own models</a></li>
+      <li><a href="#defense-title"><span class="mono">II</span>Defense</a></li>
+      <li><a href="#redteam"><span class="mono">III</span>Red Team</a></li>
+      <li><a href="#report"><span class="mono">IV</span>Report</a></li>
+      <li><a href="#team"><span class="mono">V</span>Founders</a></li>
+      <li><a href="#colophon"><span class="mono">VI</span>Contact</a></li>
+    </ol>
+  </nav>
+  <div class="ledger" aria-hidden="true">
+    <p class="ledger__state mono"><i></i><span data-ledger-state>Watching</span></p>
+    <div class="ledger__stripe"><span></span></div>
+    <ol class="ledger__lines mono" data-ledger-lines></ol>
+  </div>
+  <a class="folio__cta line" href="#colophon">Book a meeting</a>
+</aside>
+
+<main id="top">
+
+  <!-- TITLE PAGE: type on paper. Far plane is the wordmark at distance. -->
+  <header class="title" data-chapter="" data-title="Cisent" id="title">
+    <div class="title__far" aria-hidden="true">Cisent</div>
+    <div class="title__body">
+      <h1 class="display">Cybersecurity powered by our own&nbsp;AI.</h1>
+      <div class="title__foot">
+        <p class="title__sub">A cybersecurity ecosystem built on our own agentic AI. Trained to detect, defend and comply. Made in Chile.</p>
+        <p class="title__cta"><a class="line" href="#colophon">Book a meeting</a></p>
+      </div>
+    </div>
+    <span class="title__rule" aria-hidden="true"></span>
+  </header>
+
+  <!-- I · OUR OWN MODELS -->
+  <section class="ch ch-models wrap" id="models" data-chapter="I" data-title="Our own models">
+    <div class="sc-stack" data-sc-in data-sc-stagger="70">
+      <h2 class="display">We don't integrate AI. <em>We build it.</em></h2>
+      <p class="lede">Three products on one foundation: our own agentic AI, specialized in cybersecurity.</p>
+    </div>
+
+    <figure class="tally" data-sc-in>
+      <div class="tally__num" aria-hidden="true"><span data-sc-count="0 4" data-sc-count-ms="1300">4</span><span class="tally__of">of 15</span></div>
+      <div class="tally__marks" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <figcaption>
+        4 of the 15 published cybersecurity models in the world are ours: the Manthys models.
+        <span class="mono">Count as published by Cisent.</span>
+      </figcaption>
+    </figure>
+
+    <div class="spread">
+      <div data-sc-in data-sc-stagger="60">
+        <h3 class="display">They read text, hear audio and see video.</h3>
+        <ul class="ex">
+          <li><span class="mono">Image</span>The phishing screenshot</li>
+          <li><span class="mono">Photo</span>The photographed dashboard</li>
+          <li><span class="mono">Video</span>The incident recording</li>
+        </ul>
+      </div>
+      <div data-sc-in data-sc-stagger="60">
+        <h3 class="display">Trained not to make things up.</h3>
+        <p class="body">When they don't know something, they say so.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- II · intertitle. Authored silence before the peak. -->
+  <section class="inter wrap" id="defense-title" data-sc-act="flow" data-chapter="II" data-title="Defense">
+    <p class="inter__line" data-sc-reveal="right" data-sc-reveal-at="0.22 0.5"><span class="mono">II</span><span class="display">Defense</span></p>
+  </section>
+
+  <!-- II · DEFENSE. The peak: the visitor's scroll is the clock. -->
+  <section class="defense" id="defense" data-sc-act="pin" data-sc-span="2.8" data-chapter="II" data-title="Defense">
+    <div data-sc-stage>
+      <div class="defense__grid">
+        <div class="defense__copy">
+          <span class="mono">Sentinel Defense</span>
+          <h2 class="display">It doesn't just detect: <em>it defends.</em></h2>
+          <p class="lede">An agentic blue team that works alongside your EDR and firewall.</p>
+          <p class="note mono">Example incident. Your scroll is the clock; watch the margin.</p>
+        </div>
+        <figure class="incident" id="incident" data-state="watching">
+          <figcaption class="mono"><span>Sentinel Defense</span><span>Example data</span></figcaption>
+          <table>
+            <thead><tr><th scope="col">Event</th><th scope="col">Source</th><th scope="col">Status</th></tr></thead>
+            <tbody data-incident-rows></tbody>
+          </table>
+          <div class="incident__act">
+            <p data-incident-action>Watching your network.</p>
+            <span class="incident__count">Failed logins <b data-incident-count>0</b></span>
+          </div>
+          <ol class="ledger__lines mono" data-ledger-lines aria-hidden="true"></ol>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- III · RED TEAM. Hard cut to ink. -->
+  <section class="ink redteam" id="redteam" data-sc-act="flow" data-chapter="III" data-title="Red Team">
+    <div class="wrap">
+      <div class="redteam__mark" data-sc-reveal="up" data-sc-reveal-at="0.08 0.34">
+        <h2 class="display">Red <em>Team.</em></h2>
+      </div>
+      <div class="redteam__copy" data-sc-in data-sc-stagger="70">
+        <p class="lede">Attack your own systems before someone else does.</p>
+        <p class="body">The same agentic AI, pointed at your infrastructure the way an attacker would point it, so you see the gaps first.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- IV · REPORT. The incident from Defense, filed. -->
+  <section class="report wrap" id="report" data-chapter="IV" data-title="Report">
+    <div class="report__grid">
+      <div class="sc-stack" data-sc-in data-sc-stagger="70">
+        <h2 class="display">Report.</h2>
+        <p class="lede">Detect, defend, and then comply.</p>
+        <p class="body">Every incident becomes documentation your auditors can read. This is the one you just watched in Defense.</p>
+      </div>
+      <article class="sheet" data-sc-in aria-labelledby="sheet-h">
+        <header><h3 id="sheet-h">Incident report</h3><span class="mono">Example</span></header>
+        <dl>
+          <dt>Generated by</dt><dd>Cisent Report, from the Defense example on this page</dd>
+          <dt>Window</dt><dd class="mono" data-report-window></dd>
+        </dl>
+        <table>
+          <thead><tr><th scope="col">Time</th><th scope="col">Event</th><th scope="col">Source</th><th scope="col">Outcome</th></tr></thead>
+          <tbody data-report-rows></tbody>
+        </table>
+        <p class="sum" data-report-sum></p>
+        <div class="foot">
+          <span class="mono">Example data, not a real incident</span>
+          <button class="btn" type="button" data-report-dl>Download (.txt)</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- V · FOUNDERS -->
+  <section class="team wrap" id="team" data-sc-act="flow" data-chapter="V" data-title="Founders">
+    <h2 class="display" data-sc-in>Four founders. <em>Four parts of Cisent.</em></h2>
+    <ul class="people">
+      <li class="person" data-sc-in data-sc-stagger="60">
+        <figure class="person__plate"><img src="assets/team/salaberry.webp" width="428" height="536" alt="Portrait of Sebastián Salaberry" data-sc-parallax="0.5"></figure>
+        <div>
+          <span class="mono">AI models</span>
+          <h3>Sebastián Salaberry</h3>
+          <ul>
+            <li>8+ years in machine learning and AI</li>
+            <li>Created and trained the Manthys models</li>
+            <li>Researcher in computing and AI</li>
+          </ul>
+        </div>
+      </li>
+      <li class="person" data-sc-in data-sc-stagger="60">
+        <figure class="person__plate"><img src="assets/team/ossandon.webp" width="428" height="536" alt="Portrait of Gustavo Ossandón" data-sc-parallax="0.5"></figure>
+        <div>
+          <span class="mono">Architecture and deployment</span>
+          <h3>Gustavo Ossandón</h3>
+          <ul>
+            <li>30+ years in critical infrastructure</li>
+            <li>Former CTO of Sonda Cloud for the region</li>
+            <li>Founder of CCHIA</li>
+          </ul>
+        </div>
+      </li>
+      <li class="person" data-sc-in data-sc-stagger="60">
+        <figure class="person__plate"><img src="assets/team/uauy.webp" width="428" height="536" alt="Portrait of Rodrigo Uauy Rabie" data-sc-parallax="0.5"></figure>
+        <div>
+          <span class="mono">Leadership and strategy</span>
+          <h3>Rodrigo Uauy Rabie</h3>
+          <ul>
+            <li>30+ years as general manager</li>
+            <li>Founder and director of companies</li>
+            <li>Business engineer with two MBAs in International Trade</li>
+          </ul>
+        </div>
+      </li>
+      <li class="person" data-sc-in data-sc-stagger="60">
+        <figure class="person__plate"><img src="assets/team/hormero.webp" width="428" height="536" alt="Sebastián Hormero speaking on stage" data-sc-parallax="0.5"></figure>
+        <div>
+          <span class="mono">Commercial strategy</span>
+          <h3>Sebastián Hormero</h3>
+          <ul>
+            <li>8+ years in technology business</li>
+            <li>Founder and CEO of startups</li>
+            <li>National winner of ChileConverge, MoveIncuba, Premio Impacto Social and G10 Startup Chile</li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- VI · COLOPHON. The close holds. -->
+  <footer class="colophon wrap" id="colophon" data-chapter="VI" data-title="Contact">
+    <div class="colophon__ask" data-sc-in data-sc-stagger="70">
+      <h2 class="display">Shall we show you Cisent with your own case?</h2>
+      <p class="run">Message us on WhatsApp and we'll <a class="line" href="https://cisent.ai/">book a meeting</a>.</p>
+    </div>
+    <div class="colophon__mast mono">
+      <span class="mark">Cisent</span>
+      <span>Cybersecurity powered by our own AI. Made in Chile.</span>
+    </div>
+  </footer>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>ScrollCraft.mount(document.body);</script>
+<script>
+(function () {
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+  /* ---- the example incident: ONE data array drives the Defense figure,
+          the margin ledger and the Report sheet. Thresholds are Defense act
+          progress (0..1). Rows and final states are Cisent's own example. ---- */
+  var EVENTS = [
+    { id: "backup", type: "Nightly backup", src: "10.0.4.12",    t: "02:00:04",
+      steps: [[0.08, "Normal", "Backup: normal, left alone"]] },
+    { id: "scan",   type: "Port scan",      src: "198.18.22.9",  t: "02:00:11",
+      steps: [[0.20, "Analyzing", "Port scan: analyzing"]] },
+    { id: "brute",  type: "Brute force",    src: "198.18.47.23", t: "02:00:19",
+      steps: [[0.34, "Detected", "Brute force: detected"],
+              [0.60, "Blocked",  "198.18.47.23 blocked"]] }
+  ];
+  var ATTACK_FROM = 0.34, ATTACK_TO = 0.60, CLOSED_AT = 0.80, ATTEMPTS_MAX = 48;
+  var OUTCOME = { Normal: "Normal, no action", Analyzing: "Under analysis", Blocked: "Blocked at firewall" };
+
+  function stateAt(ev, p) {
+    var s = null;
+    for (var i = 0; i < ev.steps.length; i++) if (p >= ev.steps[i][0]) s = ev.steps[i];
+    return s;
+  }
+  function finalState(ev) { return ev.steps[ev.steps.length - 1][1]; }
+
+  /* ---- Defense figure rows ---- */
+  var tbody = document.querySelector("[data-incident-rows]");
+  var rowEls = {};
+  EVENTS.forEach(function (ev) {
+    var tr = document.createElement("tr");
+    tr.className = "row";
+    tr.innerHTML = "<td>" + ev.type + "</td><td class='src'>" + ev.src + "</td><td><span class='status'></span></td>";
+    tbody.appendChild(tr);
+    rowEls[ev.id] = { tr: tr, st: tr.querySelector(".status") };
+  });
+
+  var folio = document.getElementById("folio");
+  var incident = document.getElementById("incident");
+  var defense = document.getElementById("defense");
+  var stateEl = document.querySelector("[data-ledger-state]");
+  var ledgerLists = document.querySelectorAll("[data-ledger-lines]");
+  var actionEl = document.querySelector("[data-incident-action]");
+  var countEl = document.querySelector("[data-incident-count]");
+  var lastKey = "";
+
+  function render(p) {
+    var lines = [];
+    EVENTS.forEach(function (ev) {
+      var s = stateAt(ev, p), r = rowEls[ev.id];
+      r.tr.classList.toggle("is-in", !!s);
+      if (s) { r.st.textContent = s[1]; r.st.setAttribute("data-s", s[1]); }
+      else { r.st.textContent = ""; r.st.removeAttribute("data-s"); }
+      ev.steps.forEach(function (st) {
+        if (p >= st[0]) lines.push({ at: st[0], t: ev.t, text: st[2], hot: st[1] === "Detected" || st[1] === "Blocked" });
+      });
+    });
+    if (p >= CLOSED_AT) lines.push({ at: CLOSED_AT, t: "02:00:26", text: "Incident closed, filed", hot: false });
+    lines.sort(function (a, b) { return a.at - b.at; });
+
+    var state = p >= CLOSED_AT ? "closed" : p >= ATTACK_TO ? "contained" : p >= ATTACK_FROM ? "attack" : "watching";
+    var attempts = p < ATTACK_FROM ? 0 : Math.round(3 + Math.min(1, (p - ATTACK_FROM) / (ATTACK_TO - ATTACK_FROM)) * (ATTEMPTS_MAX - 3));
+    var key = state + "|" + lines.length + "|" + attempts;
+    if (key === lastKey) return;
+    lastKey = key;
+
+    incident.setAttribute("data-sc-verify-state", key);
+    incident.setAttribute("data-sc-verify-hold", state === "closed" ? "true" : "false");
+    folio.setAttribute("data-state", state);
+    incident.setAttribute("data-state", state);
+    folio.style.setProperty("--ledger-fill", Math.min(1, p / CLOSED_AT).toFixed(3));
+    stateEl.textContent = state === "attack" ? "Under attack" : state === "contained" ? "Contained. 1 blocked" : state === "closed" ? "Closed. Report filed" : (p > 0 ? "Watching. " + lines.length + " events" : "Watching");
+    countEl.textContent = attempts;
+    actionEl.textContent = state === "attack" ? "Repeated failed logins from one address. Containing." :
+                           state === "contained" ? "Rule sent to your firewall. 198.18.47.23 blocked." :
+                           state === "closed" ? "Incident closed. Filed to Report, chapter IV." :
+                           lines.length ? "Sorting routine traffic from intent." : "Watching your network.";
+
+    var html = lines.map(function (l) {
+      return "<li" + (l.hot ? " class='is-hot'" : "") + "><span>" + l.t + "</span><b>" + l.text + "</b></li>";
+    }).join("");
+    for (var i = 0; i < ledgerLists.length; i++) {
+      var ol = ledgerLists[i];
+      if (ol.children.length > lines.length || reduce) { ol.innerHTML = html; continue; }
+      // append only the new lines so earlier ones keep their place (and don't re-animate)
+      var tmp = document.createElement("ol"); tmp.innerHTML = html;
+      while (ol.children.length < tmp.children.length) ol.appendChild(tmp.children[ol.children.length]);
+    }
+  }
+
+  /* Read the engine's published --sc-p on the Defense act. */
+  var lastP = -1;
+  function loop() {
+    var p = parseFloat(defense.style.getPropertyValue("--sc-p")) || 0;
+    if (p !== lastP) { lastP = p; render(p); }
+    requestAnimationFrame(loop);
+  }
+  render(0);
+  requestAnimationFrame(loop);
+
+  /* ---- Report sheet: the same events, final states ---- */
+  var rep = document.querySelector("[data-report-rows]");
+  rep.innerHTML = EVENTS.map(function (ev) {
+    return "<tr><td class='t'>" + ev.t + "</td><td>" + ev.type + "</td><td class='mono'>" + ev.src + "</td><td>" + OUTCOME[finalState(ev)] + "</td></tr>";
+  }).join("");
+  document.querySelector("[data-report-window]").textContent = EVENTS[0].t + " to " + EVENTS[EVENTS.length - 1].t;
+  var counts = { Blocked: 0, Analyzing: 0, Normal: 0 };
+  EVENTS.forEach(function (ev) { counts[finalState(ev)]++; });
+  document.querySelector("[data-report-sum]").textContent =
+    counts.Blocked + " blocked, " + counts.Analyzing + " under analysis, " + counts.Normal + " normal with no action taken.";
+
+  document.querySelector("[data-report-dl]").addEventListener("click", function () {
+    var out = ["CISENT REPORT  (example data, not a real incident)", "Generated from the Defense example on cisent.ai", "",
+               "Window: " + EVENTS[0].t + " to " + EVENTS[EVENTS.length - 1].t, ""];
+    EVENTS.forEach(function (ev) {
+      out.push(ev.t + "  " + (ev.type + "                ").slice(0, 16) + (ev.src + "                ").slice(0, 16) + OUTCOME[finalState(ev)]);
+    });
+    out.push("", document.querySelector("[data-report-sum]").textContent, "");
+    var blob = new Blob([out.join("\n")], { type: "text/plain" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "cisent-incident-report-example.txt";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  /* ---- folio: current chapter ---- */
+  var links = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".folio__toc a"), function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var chapEl = document.querySelector(".folio__chap");
+  var chapters = Array.prototype.slice.call(document.querySelectorAll("[data-chapter]"));
+  var hrefFor = { "I": "models", "II": "defense-title", "III": "redteam", "IV": "report", "V": "team", "VI": "colophon" };
+  var inkSections = document.querySelectorAll(".ink");
+  function updateChapter() {
+    var mid = innerHeight * 0.4, cur = chapters[0];
+    for (var i = 0; i < chapters.length; i++) if (chapters[i].getBoundingClientRect().top <= mid) cur = chapters[i];
+    var c = cur.getAttribute("data-chapter");
+    Object.keys(links).forEach(function (k) { links[k].setAttribute("aria-current", hrefFor[c] === k ? "true" : "false"); });
+    chapEl.textContent = c ? c + "  " + cur.getAttribute("data-title") : "";
+  }
+  addEventListener("scroll", updateChapter, { passive: true });
+  addEventListener("resize", updateChapter);
+  updateChapter();
+
+  /* ---- title page: the far wordmark leans with the pointer and lags the scroll ---- */
+  var title = document.getElementById("title");
+  if (!reduce) {
+    addEventListener("scroll", function () {
+      var y = Math.min(scrollY, innerHeight);
+      title.style.setProperty("--ty", (y * 0.22).toFixed(1) + "px");
+    }, { passive: true });
+    if (finePointer) {
+      var tx = 0, ty = 0, cx = 0, cy = 0, running = false;
+      title.addEventListener("pointermove", function (e) {
+        var r = title.getBoundingClientRect();
+        tx = (e.clientX - r.left) / r.width - 0.5; ty = (e.clientY - r.top) / r.height - 0.5;
+        if (!running) { running = true; requestAnimationFrame(step); }
+      });
+      title.addEventListener("pointerleave", function () { tx = 0; ty = 0; });
+      function step() {
+        cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
+        title.style.setProperty("--mx", cx.toFixed(4)); title.style.setProperty("--my", cy.toFixed(4));
+        if (Math.abs(tx - cx) > 0.001 || Math.abs(ty - cy) > 0.001) requestAnimationFrame(step); else running = false;
+      }
+    }
+  }
+})();
+</script>
+</body>
+</html>
