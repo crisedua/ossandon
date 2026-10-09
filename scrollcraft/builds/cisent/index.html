@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cisent · Cybersecurity powered by our own AI</title>
 <meta name="description" content="A cybersecurity ecosystem built on our own agentic AI. Trained to detect, defend and comply. Made in Chile.">
-<meta name="theme-color" content="#ECEDE8">
+<meta name="theme-color" content="#2430C9">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23121513'/><rect x='14' y='6' width='4' height='20' fill='%23B83216'/></svg>">
 <link rel="preload" href="assets/fonts/archivo-latin-standard-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="scrollcraft.css">
@@ -28,18 +28,20 @@
   @font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-display: swap; src: url("assets/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2"); }
   @font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("assets/fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); }
 
-  /* Paper, ink, one vermilion. The ink chapter (Red Team) restates all of it. */
+  /* Four grounds, one accent hue (signal orange) at the lightness each ground
+     needs. Cobalt bookends the page, paper carries the reading, night holds
+     the attack, orange is Red Team. Each chapter cuts hard to its own ground. */
   :root {
-    --sc-canvas:     #ECEDE8;
-    --sc-surface:    #F6F6F2;
-    --sc-ink:        #121513;
-    --sc-ink-soft:   #4A514D;
-    --sc-accent:     #B83216;
+    --sc-canvas:     #F2F1EB;
+    --sc-surface:    #FBFAF6;
+    --sc-ink:        #13152B;
+    --sc-ink-soft:   #4C5068;
+    --sc-accent:     #C2380C;
     --sc-accent-ink: #FFFFFF;
     --sc-font-display: "Archivo", system-ui, sans-serif;
     --sc-font-text:    "Archivo", system-ui, sans-serif;
     --sc-font-mono:    "IBM Plex Mono", ui-monospace, monospace;
-    --sc-shadow-color: 90 8% 30%;
+    --sc-shadow-color: 235 30% 25%;
     --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.7);
 
     --folio: clamp(13rem, 17vw, 16rem);
@@ -48,6 +50,23 @@
   }
 
   body { font-stretch: 100%; }
+
+  .g-paper  { --sc-canvas: #F2F1EB; --sc-surface: #FBFAF6; --sc-ink: #13152B; --sc-ink-soft: #4C5068;
+              --sc-accent: #C2380C; --sc-accent-ink: #FFFFFF; --sc-shadow-color: 235 30% 25%;
+              --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.8);
+              --rule: color-mix(in oklab, #13152B 15%, transparent); }
+  .g-cobalt { --sc-canvas: #2430C9; --sc-surface: #2D3AD8; --sc-ink: #F5F3EC; --sc-ink-soft: #CDD0F7;
+              --sc-accent: #FFB38A; --sc-accent-ink: #13152B; --sc-shadow-color: 235 80% 10%;
+              --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.14);
+              --rule: color-mix(in oklab, #F5F3EC 24%, transparent); }
+  .g-night  { --sc-canvas: #0E1030; --sc-surface: #181B46; --sc-ink: #EEF0FA; --sc-ink-soft: #A6AACB;
+              --sc-accent: #FF7A47; --sc-accent-ink: #0E1030; --sc-shadow-color: 235 70% 3%;
+              --sc-edge: inset 0 1px 0 rgb(255 255 255 / 0.09);
+              --rule: color-mix(in oklab, #EEF0FA 16%, transparent); }
+  .g-orange { --sc-canvas: #F0541E; --sc-surface: #F26A3A; --sc-ink: #13152B; --sc-ink-soft: #2E1209;
+              --sc-accent: #13152B; --sc-accent-ink: #F0541E; --sc-shadow-color: 15 80% 20%;
+              --rule: color-mix(in oklab, #13152B 26%, transparent); }
+  .g-paper, .g-cobalt, .g-night, .g-orange { background-color: var(--sc-canvas); color: var(--sc-ink); }
   .sc-grain { opacity: 0.05; }
   ::selection { background: var(--sc-ink); color: var(--sc-canvas); }
 
@@ -81,8 +100,8 @@
     display: grid; grid-template-rows: auto auto 1fr auto; gap: var(--sc-6);
     padding: var(--sc-6) var(--sc-5) var(--sc-6) var(--sc-6);
     border-right: 1px solid var(--rule);
-    background: var(--sc-canvas);
-    transition: background-color var(--sc-d-slow) var(--sc-ease-out), color var(--sc-d-slow) var(--sc-ease-out);
+    background: var(--sc-canvas); color: var(--sc-ink);
+    transition: background-color 520ms var(--sc-ease-out), color 520ms var(--sc-ease-out), border-color 520ms var(--sc-ease-out);
   }
   .folio__mark {
     font-family: var(--sc-font-display); font-stretch: 112%; font-weight: 700;
@@ -131,7 +150,7 @@
   .folio__cta { justify-self: start; font-size: var(--sc-t-sm); }
 
   main { margin-left: var(--folio); }
-  .wrap { padding-inline: var(--sc-gutter); max-width: 76rem; }
+  .wrap { padding-left: var(--sc-gutter); padding-right: max(var(--sc-gutter), calc(100% - 76rem - var(--sc-gutter))); }
 
   /* ---------------------------------------------------------- title page -- */
   .title {
@@ -143,7 +162,7 @@
     position: absolute; left: calc(var(--sc-gutter) - 0.06em); top: 50%;
     font-family: var(--sc-font-display); font-stretch: 125%; font-weight: 800;
     font-size: clamp(9rem, 24vw, 26rem); line-height: 0.8; letter-spacing: -0.06em;
-    color: color-mix(in oklab, var(--sc-ink) 5.5%, var(--sc-canvas));
+    color: color-mix(in oklab, var(--sc-ink) 11%, var(--sc-canvas));
     translate: 0 -62%;
     transform: translate3d(calc(var(--mx, 0) * -14px), calc(var(--my, 0) * -10px + var(--ty, 0px)), 0);
     user-select: none; pointer-events: none; white-space: nowrap;
@@ -153,6 +172,15 @@
   .title__foot { display: grid; grid-template-columns: minmax(0, 30rem) auto; gap: var(--sc-7); align-items: end; }
   .title__sub { margin: 0; font-size: var(--sc-t-lg); line-height: 1.45; color: var(--sc-ink); text-wrap: pretty; }
   .title__cta { margin: 0; font-size: var(--sc-t-lg); white-space: nowrap; }
+  @media (prefers-reduced-motion: no-preference) {
+    .title__far { animation: far-in 1600ms var(--sc-ease-out) both; }
+    .title h1, .title__sub, .title__cta { animation: rise-in 760ms var(--sc-ease-out) both; }
+    .title h1 { animation-delay: 120ms; }
+    .title__sub { animation-delay: 300ms; }
+    .title__cta { animation-delay: 420ms; }
+  }
+  @keyframes far-in { from { opacity: 0; scale: 1.06; } }
+  @keyframes rise-in { from { opacity: 0; translate: 0 22px; } }
   .title__rule {
     position: absolute; left: var(--sc-gutter); right: var(--sc-gutter); bottom: 0; height: 1px; background: var(--rule);
   }
@@ -196,7 +224,7 @@
   .spread .ex .mono { color: var(--sc-ink-soft); padding-top: 0.2em; }
 
   /* -------------------------------------------------------- intertitle -- */
-  .inter { min-height: 82svh; display: grid; align-items: center; border-top: 1px solid var(--rule); }
+  .inter { min-height: 82svh; display: grid; align-items: center; }
   .inter__line { display: flex; align-items: baseline; gap: var(--sc-6); margin: 0; }
   .inter__line .mono { font-size: var(--sc-t-base); color: var(--sc-accent); }
   .inter__line .display { font-size: var(--sc-t-4xl); }
@@ -242,20 +270,23 @@
   .incident__count b { font-weight: 500; color: var(--sc-ink); font-variant-numeric: tabular-nums; }
   .incident[data-state="attack"] .incident__count b { color: var(--sc-accent); }
   .incident .ledger__lines { display: none; }
+  .pulse { margin-top: var(--sc-5); display: grid; gap: var(--sc-2); }
+  .pulse svg { width: 100%; height: 64px; overflow: visible; }
+  .pulse rect { fill: var(--sc-ink-soft); opacity: 0.55; transform-box: fill-box; transform-origin: bottom; transition: transform 220ms var(--sc-ease-out), opacity 220ms var(--sc-ease-out); }
+  .pulse rect.hot { fill: var(--sc-accent); opacity: 1; }
+  .pulse rect.off { transform: scaleY(0); opacity: 0; }
+  .pulse .mono { color: var(--sc-ink-soft); }
+  .incident[data-state="attack"] { box-shadow: var(--sc-e3), var(--sc-edge), 0 0 0 1px var(--sc-accent); }
 
   /* -------------------------------------------------- red team (ink) -- */
-  .ink {
-    --sc-canvas: #141716; --sc-surface: #1C201E; --sc-ink: #E8EAE4; --sc-ink-soft: #A0A8A3;
-    --sc-accent: #FF7356; --sc-accent-ink: #141716; --rule: color-mix(in oklab, #E8EAE4 18%, transparent);
-    background: var(--sc-canvas); color: var(--sc-ink);
-  }
-  .redteam { min-height: 112svh; display: grid; align-content: center; padding-block: var(--sc-section); }
+  .redteam { position: relative; }
+  .redteam__panel { min-height: 112svh; display: grid; align-content: center; padding-block: var(--sc-section); }
   .redteam__mark { overflow: hidden; }
   .redteam h2 {
     font-size: clamp(5rem, 17vw, 16rem); line-height: 0.82; letter-spacing: -0.05em; font-stretch: 72%;
     font-weight: 720; padding-bottom: 0.08em;
   }
-  .redteam h2 em { color: var(--sc-accent); font-style: normal; }
+  .redteam h2 em { color: #F5F3EC; font-style: italic; font-weight: 640; }
   .redteam__copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sc-8); margin-top: var(--sc-8); align-items: start; }
   .redteam .lede { font-size: var(--sc-t-xl); line-height: 1.25; letter-spacing: -0.015em; max-width: 20ch; font-weight: 520; }
   .redteam .body { font-size: var(--sc-t-lg); line-height: 1.55; }
@@ -294,20 +325,21 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
   /* ------------------------------------------------------------- team -- */
-  .team { padding-block: var(--sc-section); border-top: 1px solid var(--rule); }
+  .team { padding-block: var(--sc-section); }
   .team h2 { font-size: var(--sc-t-3xl); max-width: 14ch; }
   .people { list-style: none; margin: var(--sc-9) 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--sc-9) var(--sc-8); }
   .people li:nth-child(even) { margin-top: var(--sc-10); }
   .person { display: grid; grid-template-columns: minmax(8rem, 0.8fr) 1fr; gap: var(--sc-5); align-items: start; }
-  .person__plate { margin: 0; overflow: hidden; border-radius: var(--r); background: #1a1d1b; aspect-ratio: 4 / 5; }
-  .person__plate img { width: 100%; height: 112%; object-fit: cover; margin-top: -6%; }
+  .person__plate { margin: 0; overflow: hidden; border-radius: var(--r); background: #2430C9; aspect-ratio: 4 / 5; isolation: isolate; }
+  .person__plate img { width: 100%; height: 112%; object-fit: cover; margin-top: -6%; mix-blend-mode: screen; filter: contrast(1.12); }
+  .people li:nth-child(4n+2) .person__plate, .people li:nth-child(4n+3) .person__plate { background: #C2380C; }
   .person .mono { color: var(--sc-ink-soft); display: block; }
   .person h3 { margin: var(--sc-2) 0 var(--sc-4); font-family: var(--sc-font-display); font-stretch: 90%; font-weight: 620; font-size: var(--sc-t-xl); letter-spacing: -0.02em; line-height: 1.05; }
   .person ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sc-2); font-size: var(--sc-t-sm); line-height: 1.45; }
   .person ul li { padding-top: var(--sc-2); border-top: 1px solid var(--rule); margin: 0 !important; }
 
   /* -------------------------------------------------------- colophon -- */
-  .colophon { min-height: 88svh; display: grid; grid-template-rows: 1fr auto; padding-block: var(--sc-section) var(--sc-6); border-top: 1px solid var(--rule); }
+  .colophon { min-height: 88svh; display: grid; grid-template-rows: 1fr auto; padding-block: var(--sc-section) var(--sc-6); }
   .colophon__ask { align-self: center; }
   .colophon h2 { font-size: var(--sc-t-3xl); max-width: 16ch; }
   .colophon p.run { font-size: var(--sc-t-xl); line-height: 1.35; margin: var(--sc-6) 0 0; max-width: 30ch; letter-spacing: -0.012em; }
@@ -347,6 +379,7 @@
     .incident { padding: var(--sc-4); }
     .incident td { padding-block: var(--sc-3); }
     .incident th:nth-child(2), .incident td.src { display: none; }
+    .pulse svg { height: 40px; }
     .redteam__copy, .report__grid { grid-template-columns: 1fr; gap: var(--sc-6); }
     .sheet { margin-right: 0; rotate: 0deg; }
     .sheet th:nth-child(3), .sheet td.mono { display: none; }
@@ -366,7 +399,7 @@
 
 <div class="sc-grain" aria-hidden="true"></div>
 
-<aside class="folio" id="folio" data-state="watching" aria-label="Contents">
+<aside class="folio g-cobalt" id="folio" data-state="watching" aria-label="Contents">
   <a class="folio__mark" href="#top">Cisent</a>
   <span class="folio__chap mono" aria-hidden="true"></span>
   <nav aria-label="Chapters">
@@ -390,7 +423,7 @@
 <main id="top">
 
   <!-- TITLE PAGE: type on paper. Far plane is the wordmark at distance. -->
-  <header class="title" data-chapter="" data-title="Cisent" id="title">
+  <header class="title g-cobalt" data-chapter="" data-title="Cisent" data-ground="cobalt" id="title">
     <div class="title__far" aria-hidden="true">Cisent</div>
     <div class="title__body">
       <h1 class="display">Cybersecurity powered by our own&nbsp;AI.</h1>
@@ -403,7 +436,7 @@
   </header>
 
   <!-- I · OUR OWN MODELS -->
-  <section class="ch ch-models wrap" id="models" data-chapter="I" data-title="Our own models">
+  <section class="ch ch-models wrap g-paper" data-ground="paper" id="models" data-chapter="I" data-title="Our own models">
     <div class="sc-stack" data-sc-in data-sc-stagger="70">
       <h2 class="display">We don't integrate AI. <em>We build it.</em></h2>
       <p class="lede">Three products on one foundation: our own agentic AI, specialized in cybersecurity.</p>
@@ -437,12 +470,12 @@
   </section>
 
   <!-- II · intertitle. Authored silence before the peak. -->
-  <section class="inter wrap" id="defense-title" data-sc-act="flow" data-chapter="II" data-title="Defense">
+  <section class="inter wrap g-night" data-ground="night" id="defense-title" data-sc-act="flow" data-chapter="II" data-title="Defense">
     <p class="inter__line" data-sc-reveal="right" data-sc-reveal-at="0.22 0.5"><span class="mono">II</span><span class="display">Defense</span></p>
   </section>
 
   <!-- II · DEFENSE. The peak: the visitor's scroll is the clock. -->
-  <section class="defense" id="defense" data-sc-act="pin" data-sc-span="2.8" data-chapter="II" data-title="Defense">
+  <section class="defense g-night" data-ground="night" id="defense" data-sc-act="pin" data-sc-span="2.8" data-chapter="II" data-title="Defense">
     <div data-sc-stage>
       <div class="defense__grid">
         <div class="defense__copy">
@@ -457,6 +490,10 @@
             <thead><tr><th scope="col">Event</th><th scope="col">Source</th><th scope="col">Status</th></tr></thead>
             <tbody data-incident-rows></tbody>
           </table>
+          <div class="pulse" aria-hidden="true">
+            <svg viewBox="0 0 480 64" preserveAspectRatio="none" data-pulse></svg>
+            <span class="mono">Login attempts per second</span>
+          </div>
           <div class="incident__act">
             <p data-incident-action>Watching your network.</p>
             <span class="incident__count">Failed logins <b data-incident-count>0</b></span>
@@ -467,10 +504,10 @@
     </div>
   </section>
 
-  <!-- III · RED TEAM. Hard cut to ink. -->
-  <section class="ink redteam" id="redteam" data-sc-act="flow" data-chapter="III" data-title="Red Team">
-    <div class="wrap">
-      <div class="redteam__mark" data-sc-reveal="up" data-sc-reveal-at="0.08 0.34">
+  <!-- III · RED TEAM. An orange ground wipes up over the night of Defense. -->
+  <section class="redteam g-night" id="redteam" data-sc-act="flow" data-chapter="III" data-title="Red Team" data-ground="orange">
+    <div class="redteam__panel g-orange wrap" data-sc-reveal="down" data-sc-reveal-at="0.04 0.4">
+      <div class="redteam__mark">
         <h2 class="display">Red <em>Team.</em></h2>
       </div>
       <div class="redteam__copy" data-sc-in data-sc-stagger="70">
@@ -481,7 +518,7 @@
   </section>
 
   <!-- IV · REPORT. The incident from Defense, filed. -->
-  <section class="report wrap" id="report" data-chapter="IV" data-title="Report">
+  <section class="report wrap g-paper" data-ground="paper" id="report" data-chapter="IV" data-title="Report">
     <div class="report__grid">
       <div class="sc-stack" data-sc-in data-sc-stagger="70">
         <h2 class="display">Report.</h2>
@@ -508,7 +545,7 @@
   </section>
 
   <!-- V · FOUNDERS -->
-  <section class="team wrap" id="team" data-sc-act="flow" data-chapter="V" data-title="Founders">
+  <section class="team wrap g-paper" data-ground="paper" id="team" data-sc-act="flow" data-chapter="V" data-title="Founders">
     <h2 class="display" data-sc-in>Four founders. <em>Four parts of Cisent.</em></h2>
     <ul class="people">
       <li class="person" data-sc-in data-sc-stagger="60">
@@ -563,7 +600,7 @@
   </section>
 
   <!-- VI · COLOPHON. The close holds. -->
-  <footer class="colophon wrap" id="colophon" data-chapter="VI" data-title="Contact">
+  <footer class="colophon wrap g-cobalt" data-ground="cobalt" id="colophon" data-chapter="VI" data-title="Contact">
     <div class="colophon__ask" data-sc-in data-sc-stagger="70">
       <h2 class="display">Shall we show you Cisent with your own case?</h2>
       <p class="run">Message us on WhatsApp and we'll <a class="line" href="https://cisent.ai/">book a meeting</a>.</p>
@@ -606,6 +643,30 @@
   }
   function finalState(ev) { return ev.steps[ev.steps.length - 1][1]; }
 
+  /* ---- Defense pulse: attempts per second, one bar per tick of the example ---- */
+  var BARS = 48, HOT_FROM = Math.round(ATTACK_FROM / CLOSED_AT * BARS), HOT_TO = Math.round(ATTACK_TO / CLOSED_AT * BARS);
+  var svg = document.querySelector("[data-pulse]"), bars = [];
+  for (var bi = 0; bi < BARS; bi++) {
+    var jitter = ((bi * 37) % 11) / 11;                       // deterministic, not random
+    var v = bi < HOT_FROM ? 1 + jitter * 2.2
+          : bi < HOT_TO ? 5 + (bi - HOT_FROM) / (HOT_TO - HOT_FROM) * 14 + jitter * 4
+          : 0.6 + jitter * 0.8;
+    var h = Math.min(62, v * 3);
+    var r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    r.setAttribute("x", (bi * 10).toFixed(1)); r.setAttribute("width", "6");
+    r.setAttribute("y", (64 - h).toFixed(1)); r.setAttribute("height", h.toFixed(1));
+    if (bi >= HOT_FROM && bi < HOT_TO) r.classList.add("hot");
+    r.classList.add("off");
+    svg.appendChild(r); bars.push(r);
+  }
+  var shownBars = 0;
+  function renderBars(p) {
+    var n = Math.max(0, Math.min(BARS, Math.round(p / CLOSED_AT * BARS)));
+    if (n === shownBars) return n;
+    for (var k = 0; k < BARS; k++) bars[k].classList.toggle("off", k >= n);
+    shownBars = n; return n;
+  }
+
   /* ---- Defense figure rows ---- */
   var tbody = document.querySelector("[data-incident-rows]");
   var rowEls = {};
@@ -642,7 +703,7 @@
 
     var state = p >= CLOSED_AT ? "closed" : p >= ATTACK_TO ? "contained" : p >= ATTACK_FROM ? "attack" : "watching";
     var attempts = p < ATTACK_FROM ? 0 : Math.round(3 + Math.min(1, (p - ATTACK_FROM) / (ATTACK_TO - ATTACK_FROM)) * (ATTEMPTS_MAX - 3));
-    var key = state + "|" + lines.length + "|" + attempts;
+    var key = state + "|" + lines.length + "|" + attempts + "|" + renderBars(p);
     if (key === lastKey) return;
     lastKey = key;
 
@@ -711,13 +772,17 @@
   var chapEl = document.querySelector(".folio__chap");
   var chapters = Array.prototype.slice.call(document.querySelectorAll("[data-chapter]"));
   var hrefFor = { "I": "models", "II": "defense-title", "III": "redteam", "IV": "report", "V": "team", "VI": "colophon" };
-  var inkSections = document.querySelectorAll(".ink");
   function updateChapter() {
     var mid = innerHeight * 0.4, cur = chapters[0];
     for (var i = 0; i < chapters.length; i++) if (chapters[i].getBoundingClientRect().top <= mid) cur = chapters[i];
     var c = cur.getAttribute("data-chapter");
     Object.keys(links).forEach(function (k) { links[k].setAttribute("aria-current", hrefFor[c] === k ? "true" : "false"); });
     chapEl.textContent = c ? c + "  " + cur.getAttribute("data-title") : "";
+    var g = "g-" + (cur.getAttribute("data-ground") || "paper");
+    if (!folio.classList.contains(g)) {
+      folio.classList.remove("g-paper", "g-cobalt", "g-night", "g-orange");
+      folio.classList.add(g);
+    }
   }
   addEventListener("scroll", updateChapter, { passive: true });
   addEventListener("resize", updateChapter);

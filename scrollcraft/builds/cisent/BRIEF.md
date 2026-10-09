@@ -128,3 +128,17 @@ end it has been filed as a report you can download.
 
 Act 4, the intertitle: one line on an otherwise empty paper ground, about 0.8
 viewport-heights. Intentional, not dead scroll.
+
+## Revision 2 (user feedback: "more lively, better colors")
+
+Verbatim request: "can you make it more lively, better colors". Changes:
+
+- Four chapter grounds with hard cuts, one accent hue: cobalt (title, close,
+  a solid nod to Cisent's violet-blue brand, no gradient), paper (reading
+  chapters), night (Defense), signal orange (Red Team).
+- Red Team's orange ground wipes up over the night of Defense.
+- Title page entrance on load; far wordmark settles in.
+- Defense gains a scroll-drawn "login attempts per second" chart (example
+  data), with the attack bars in the accent.
+- Founder portraits as cobalt and orange duotones.
+- The folio takes the ground of the chapter you are in.
